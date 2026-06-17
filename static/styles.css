@@ -729,3 +729,167 @@ header:hover {
   color: var(--text-secondary);
   max-width: 450px;
 }
+
+/* Header Actions container */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Theme Toggle Button */
+.btn-theme-toggle {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--panel-border);
+  color: var(--text-secondary);
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--panel-border-hover);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+}
+
+.btn-theme-toggle svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  transition: transform 0.5s ease;
+}
+
+.btn-theme-toggle:hover svg {
+  transform: rotate(30deg);
+}
+
+/* Toggle Icon States */
+.icon-moon {
+  display: none;
+}
+
+.icon-sun {
+  display: block;
+}
+
+/* --- LIGHT MODE OVERRIDES --- */
+body.light-theme {
+  --bg-color: #f1f5f9;
+  --bg-gradient: radial-gradient(circle at top, #eff6ff 0%, #e2e8f0 100%);
+  --panel-bg: rgba(255, 255, 255, 0.7);
+  --panel-border: rgba(15, 23, 42, 0.08);
+  --panel-border-hover: rgba(59, 130, 246, 0.45);
+  
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  
+  --accent-glow: 0 8px 30px rgba(59, 130, 246, 0.06);
+}
+
+/* Specific Light Theme Component Adjustments */
+body.light-theme .bg-glow-1 {
+  background: radial-gradient(circle, rgba(66, 133, 244, 0.06) 0%, transparent 70%);
+}
+
+body.light-theme .bg-glow-2 {
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.04) 0%, transparent 70%);
+}
+
+body.light-theme .btn-theme-toggle {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+body.light-theme .btn-theme-toggle:hover {
+  background: rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+}
+
+body.light-theme .icon-moon {
+  display: block;
+}
+
+body.light-theme .icon-sun {
+  display: none;
+}
+
+body.light-theme .search-input {
+  background: rgba(255, 255, 255, 0.85);
+  color: #0f172a;
+}
+
+body.light-theme .search-input:focus {
+  background: #ffffff;
+}
+
+body.light-theme .tag-btn {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+body.light-theme .tag-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--text-primary);
+}
+
+body.light-theme .tag-btn.active {
+  background: rgba(59, 130, 246, 0.1);
+  color: #1d4ed8;
+}
+
+body.light-theme .card-checkbox {
+  border-color: #94a3b8;
+}
+
+body.light-theme .skeleton-card {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.04);
+}
+
+body.light-theme .release-card:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05), var(--accent-glow);
+}
+
+body.light-theme .btn-copy:hover {
+  background: rgba(16, 185, 129, 0.08);
+}
+
+body.light-theme .btn-tweet:hover {
+  background: rgba(29, 155, 240, 0.08);
+}
+
+body.light-theme .btn-export {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+body.light-theme .btn-export:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--text-primary);
+}
+
+body.light-theme .btn-clear-selection {
+  background: rgba(0, 0, 0, 0.03);
+  color: var(--text-secondary);
+}
+
+body.light-theme .btn-clear-selection:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--text-primary);
+}
+
+body.light-theme .floating-bar {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(59, 130, 246, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1), 0 0 30px rgba(59, 130, 246, 0.05);
+}
+
+body.light-theme .selection-info {
+  color: var(--text-primary);
+}
