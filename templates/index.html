@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BigQuery Release Notes Radar</title>
+  <meta name="description" content="Stay updated with the latest features, enhancements, and fixes in Google BigQuery. Select updates to Tweet.">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <!-- Decorative Glowing Background elements -->
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="brand">
+        <div class="logo-container">
+          <!-- Database/BigQuery themed SVG icon -->
+          <svg viewBox="0 0 24 24">
+            <path d="M19 12v7c0 1.66-3.58 3-8 3s-8-1.34-8-3v-7c0 1.66 3.58 3 8 3s8-1.34 8-3zm0-5v3c0 1.66-3.58 3-8 3s-8-1.34-8-3V7c0 1.66 3.58 3 8 3s8-1.34 8-3zm-8-5c4.42 0 8 1.34 8 3s-3.58 3-8 3-8-1.34-8-3 3.58-3 8-3z"/>
+          </svg>
+        </div>
+        <div class="title-area">
+          <h1>BigQuery Release Notes Radar</h1>
+          <p>Real-time updates & announcement tracker</p>
+        </div>
+      </div>
+
+      <button id="refreshBtn" class="btn-refresh" aria-label="Refresh release notes">
+        <svg viewBox="0 0 24 24">
+          <path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+        </svg>
+        <span>Refresh</span>
+      </button>
+    </header>
+
+    <!-- Toolbar controls -->
+    <div class="toolbar">
+      <div class="search-wrapper">
+        <svg viewBox="0 0 24 24">
+          <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+        </svg>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search release notes by keywords...">
+      </div>
+
+      <div class="filter-tags" id="categoryFilters">
+        <button class="tag-btn active" data-filter="All">All Updates</button>
+        <button class="tag-btn" data-filter="Feature">Features</button>
+        <button class="tag-btn" data-filter="Announcement">Announcements</button>
+        <button class="tag-btn" data-filter="Issue">Issues</button>
+        <button class="tag-btn" data-filter="Deprecation">Deprecations</button>
+      </div>
+    </div>
+
+    <!-- Feed Container -->
+    <div id="feed" class="feed-container">
+      <!-- Skeleton Loaders -->
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+    </div>
+  </div>
+
+  <!-- Floating Bar for Multi-selection Tweets -->
+  <div id="floatingBar" class="floating-bar">
+    <div class="selection-info">
+      <span id="selectedCount">0</span> updates selected
+    </div>
+    <div class="floating-actions">
+      <button id="tweetSelectedBtn" class="btn-floating-tweet">
+        <!-- Twitter/X logo SVG -->
+        <svg viewBox="0 0 24 24">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+        Tweet Selected
+      </button>
+      <button id="clearSelectionBtn" class="btn-clear-selection">Clear</button>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
