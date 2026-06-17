@@ -893,3 +893,53 @@ body.light-theme .floating-bar {
 body.light-theme .selection-info {
   color: var(--text-primary);
 }
+
+/* Accessibility focus states */
+:focus-visible {
+  outline: 2px solid var(--google-blue);
+  outline-offset: 4px;
+}
+
+.last-synced {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-left: 0.5rem;
+  font-style: italic;
+  display: inline-block;
+  opacity: 0.85;
+}
+
+/* Clear Filters Button */
+.btn-clear-filters {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: var(--google-blue);
+  padding: 0.55rem 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.btn-clear-filters:hover {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: rgba(59, 130, 246, 0.5);
+  transform: translateY(-1px);
+}
+
+.btn-clear-filters:active {
+  transform: translateY(0);
+}
+
+body.light-theme .btn-clear-filters {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.25);
+  color: #1d4ed8;
+}
+
+body.light-theme .btn-clear-filters:hover {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.4);
+}

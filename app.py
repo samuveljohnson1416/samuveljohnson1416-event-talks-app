@@ -2,10 +2,18 @@ import os
 import re
 import urllib.request
 import xml.etree.ElementTree as ET
-from flask import Flask, jsonify, render_template
+import time
+from flask import Flask, jsonify, render_template, request
 from bs4 import BeautifulSoup
 
 app = Flask(__name__)
+
+# Simple in-memory cache (valid for 30 minutes)
+feed_cache = {
+    "entries": None,
+    "last_fetched": 0  # Epoch timestamp
+}
+CACHE_DURATION = 1800  # 30 minutes in seconds
 
 # Add a route to serve the main index file
 @app.route('/')
@@ -14,6 +22,18 @@ def index():
 
 @app.route('/api/release-notes')
 def get_release_notes():
+    force_refresh = request.args.get('force', 'false').lower() == 'true'
+    current_time = time.time()
+
+    # Serve from cache if available and not expired
+    if not force_refresh and feed_cache["entries"] is not None and (current_time - feed_cache["last_fetched"] < CACHE_DURATION):
+        return jsonify({
+            "success": True,
+            "entries": feed_cache["entries"],
+            "last_fetched": feed_cache["last_fetched"],
+            "cached": True
+        })
+
     try:
         url = "https://docs.cloud.google.com/feeds/bigquery-release-notes.xml"
         req = urllib.request.Request(
@@ -87,9 +107,15 @@ def get_release_notes():
                 "sub_items": sub_items
             })
             
+        # Update cache
+        feed_cache["entries"] = entries
+        feed_cache["last_fetched"] = time.time()
+
         return jsonify({
             "success": True,
-            "entries": entries
+            "entries": entries,
+            "last_fetched": feed_cache["last_fetched"],
+            "cached": False
         })
     except Exception as e:
         return jsonify({

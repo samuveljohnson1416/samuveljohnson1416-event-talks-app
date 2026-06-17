@@ -27,8 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Load release notes on initialization
   loadReleaseNotes();
 
-  // Refresh button event listener
-  refreshBtn.addEventListener('click', loadReleaseNotes);
+  // Refresh button event listener (triggers force fetch, bypassing cache)
+  refreshBtn.addEventListener('click', () => loadReleaseNotes(true));
 
   // Search input listener with simple debounce
   let searchTimeout;
@@ -81,19 +81,32 @@ document.addEventListener('DOMContentLoaded', () => {
   clearSelectionBtn.addEventListener('click', clearAllSelections);
   tweetSelectedBtn.addEventListener('click', tweetSelectedItems);
 
+  // Friendly formatter for last synced timestamp
+  function updateLastSyncedTime(timestamp) {
+    if (!timestamp) return;
+    const date = new Date(timestamp * 1000);
+    const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const lastSyncedEl = document.getElementById('lastSynced');
+    if (lastSyncedEl) {
+      lastSyncedEl.textContent = `(Synced: ${timeString})`;
+    }
+  }
+
   // Load feed from API
-  async function loadReleaseNotes() {
+  async function loadReleaseNotes(force = false) {
     refreshBtn.classList.add('loading');
     refreshBtn.disabled = true;
     showSkeletons();
     clearAllSelections();
 
     try {
-      const response = await fetch('/api/release-notes');
+      const url = force ? '/api/release-notes?force=true' : '/api/release-notes';
+      const response = await fetch(url);
       const data = await response.json();
 
       if (data.success) {
         releaseNotesData = data.entries;
+        updateLastSyncedTime(data.last_fetched);
         applyFilters();
       } else {
         showErrorState(data.error || 'Failed to fetch release notes.');
@@ -157,6 +170,24 @@ document.addEventListener('DOMContentLoaded', () => {
     renderFeed(filteredNotes);
   }
 
+  // Reset all filters utility
+  function resetAllFilters() {
+    searchInput.value = '';
+    searchQuery = '';
+    currentFilter = 'All';
+    
+    // Reset category filter tags UI
+    categoryFilters.querySelectorAll('.tag-btn').forEach(b => {
+      if (b.dataset.filter === 'All') {
+        b.classList.add('active');
+      } else {
+        b.classList.remove('active');
+      }
+    });
+
+    applyFilters();
+  }
+
   // Render actual feed content
   function renderFeed(groupedEntries) {
     if (groupedEntries.length === 0) {
@@ -167,8 +198,14 @@ document.addEventListener('DOMContentLoaded', () => {
           </svg>
           <h3>No release notes found</h3>
           <p>Try refining your search or category filters.</p>
+          <button id="resetFiltersBtn" class="btn-clear-filters">Reset Filters</button>
         </div>
       `;
+      
+      const resetBtn = document.getElementById('resetFiltersBtn');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', resetAllFilters);
+      }
       return;
     }
 
