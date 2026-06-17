@@ -2,6 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   let releaseNotesData = [];
+  let filteredNotes = []; // Keeps track of active filtered list for CSV export
   const selectedUpdates = new Set();
   let currentFilter = 'All';
   let searchQuery = '';
@@ -9,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const refreshBtn = document.getElementById('refreshBtn');
   const searchInput = document.getElementById('searchInput');
   const categoryFilters = document.getElementById('categoryFilters');
+  const exportCsvBtn = document.getElementById('exportCsvBtn');
   const feedContainer = document.getElementById('feed');
   const floatingBar = document.getElementById('floatingBar');
   const selectedCountEl = document.getElementById('selectedCount');
@@ -50,6 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
     currentFilter = btn.dataset.filter;
     applyFilters();
   });
+
+  // Export to CSV Event
+  if (exportCsvBtn) {
+    exportCsvBtn.addEventListener('click', exportToCSV);
+  }
 
   // Floating Action Bar Events
   clearSelectionBtn.addEventListener('click', clearAllSelections);
@@ -104,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Apply Search & Category Filters
   function applyFilters() {
-    const filteredGrouped = [];
+    filteredNotes = [];
 
     releaseNotesData.forEach(entry => {
       // Filter individual sub-items inside each day
@@ -121,14 +128,14 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       if (matchingSubItems.length > 0) {
-        filteredGrouped.push({
+        filteredNotes.push({
           ...entry,
           sub_items: matchingSubItems
         });
       }
     });
 
-    renderFeed(filteredGrouped);
+    renderFeed(filteredNotes);
   }
 
   // Render actual feed content
@@ -168,6 +175,12 @@ document.addEventListener('DOMContentLoaded', () => {
               <div class="card-header-row">
                 <span class="badge">${item.type}</span>
                 <div class="card-actions">
+                  <button class="btn-copy single-copy-btn" data-text="${escapeHtml(plainText)}">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                    </svg>
+                    <span>Copy</span>
+                  </button>
                   <button class="btn-tweet single-tweet-btn" data-date="${dateString}" data-type="${item.type}" data-text="${escapeHtml(plainText)}" data-link="${entry.link}">
                     <svg viewBox="0 0 24 24">
                       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -228,6 +241,58 @@ document.addEventListener('DOMContentLoaded', () => {
         tweetSingle(date, type, text, link);
       });
     });
+
+    // Single Copy Button Listener
+    document.querySelectorAll('.single-copy-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const text = btn.dataset.text;
+        navigator.clipboard.writeText(text).then(() => {
+          const span = btn.querySelector('span');
+          const originalText = span.textContent;
+          span.textContent = 'Copied!';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            span.textContent = originalText;
+            btn.classList.remove('copied');
+          }, 1500);
+        }).catch(err => {
+          console.error('Failed to copy text: ', err);
+        });
+      });
+    });
+  }
+
+  // Export filtered notes to CSV
+  function exportToCSV() {
+    if (!filteredNotes || filteredNotes.length === 0) {
+      alert('No release notes available to export.');
+      return;
+    }
+
+    let csvRows = ["Date,Category,Description,Link"];
+
+    filteredNotes.forEach(entry => {
+      const date = entry.title;
+      const link = entry.link;
+      entry.sub_items.forEach(item => {
+        const category = item.type;
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = item.html;
+        const description = tempDiv.textContent.replace(/"/g, '""').replace(/\s+/g, ' ').trim();
+        csvRows.push(`"${date}","${category}","${description}","${link}"`);
+      });
+    });
+
+    const csvString = csvRows.join("\n");
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const downloadLink = document.createElement("a");
+    downloadLink.setAttribute("href", url);
+    downloadLink.setAttribute("download", `bigquery_release_notes_${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
   }
 
   // Update floating bar selection stats
